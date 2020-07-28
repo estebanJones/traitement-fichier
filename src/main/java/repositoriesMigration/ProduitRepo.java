@@ -1,6 +1,10 @@
 package repositoriesMigration;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,8 +26,11 @@ public class ProduitRepo implements IProduitMigration {
 	@Override
 	public void insertCSVtoDB(List<Magasin> magasin) throws IOException {
 		List<Produit> formatteProduit = this.formatteProduit(magasin);
-		
+//		Path fichier = Paths.get("./file/log.txt");
+//		Files.write(fichier, produit.getNom().getBytes(), StandardOpenOption.APPEND);
+	
 		formatteProduit.forEach(produit -> {
+			System.out.println(produit.getId() + " " + produit.getNom());
 				Connection connection = null;
 				ResultSet resultSet = null;
 				Statement statement = null;
@@ -50,7 +57,9 @@ public class ProduitRepo implements IProduitMigration {
 	private List<Produit> formatteProduit(List<Magasin> magasin) throws IOException {
 		return magasin.stream()
 				 .map(e -> new Produit(e.getProduit().getId(), e.getProduit().getNom(), e.getProduit().getIdMarque()))
-				 .filter(e -> e.getNom().length() > 2 && e != null && !(e.getNom().equalsIgnoreCase("marque")))
+				 .filter(e -> e.getNom().length() > 2 
+						 && e != null 
+						 && !(e.getNom().equalsIgnoreCase("nom")))
 				 .distinct()
 				 .collect(Collectors.toList());
 	}
